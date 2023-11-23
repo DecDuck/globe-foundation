@@ -79,7 +79,7 @@
 </template>
 
 <script setup lang="ts">
-import { decryptSymmetric, genKey, type User } from "../encryption";
+import { decryptSymmetric, genKey, type Payload, type User } from "../payload";
 
 function formatBytes(bytes: number, decimals = 2) {
   if (!+bytes) return "0 Bytes";
@@ -111,6 +111,8 @@ if (!auth.value) {
   router.replace("/access/login");
 }
 
+const payload = useState<Payload>("payload");
+
 const clearances: { [key: string]: string } = {
   B: "text-green-700 bg-green-50 ring-green-600/20",
   NV1: "text-cyan-600 bg-cyan-50 ring-cyan-500/10",
@@ -122,25 +124,26 @@ const decryptedDocuments = ref<{
   [key: string]: { filename: string; data: string; clearance: string };
 }>({});
 
-const documents = useAsyncData("viewer-documents", async () => {
-  return (await queryContent("/docs/").find())
-    .filter((document) => {
-      if (document._type != "json") {
-        return false;
-      }
-      const documentID = document.title?.toLocaleLowerCase();
-      if (documentID != auth.value.userID) {
-        return false;
-      }
-
-      return true;
-    })
-    .map((e) => {
-      decryptSymmetric(e.ciphertext, e.iv, auth.value.key).then((doc) => {
-        const data = JSON.parse(doc);
-        decryptedDocuments.value[e._dir] = data;
-      });
-      return { ...e, id: e._dir };
-    });
-});
+const documents = useAsyncData(
+  "viewer-documents",
+  async (): Promise<Array<{ id: string; ciphertext: string; iv: string }>> => {
+    // We filter, but typescript doesn't pick it up
+    // @ts-ignore
+    return Object.entries(payload.value.documents)
+      .map(([foldername, files]) => {
+        if (files[auth.value.userID]) {
+          // We have an entry in this document
+          const file = files[auth.value.userID];
+          decryptSymmetric(file.ciphertext, file.iv, auth.value.key).then(
+            (doc) => {
+              const data = JSON.parse(doc);
+              decryptedDocuments.value[foldername] = data;
+            }
+          );
+          return { ...file, id: foldername };
+        }
+      })
+      .filter((e) => e);
+  }
+);
 </script>

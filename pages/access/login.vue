@@ -103,7 +103,7 @@
 
 <script setup lang="ts">
 import { XCircleIcon } from "@heroicons/vue/20/solid";
-import { genKey, genUserId, type User } from "./encryption";
+import { genKey, genUserId, importPayload, type Payload, type User } from "./payload";
 const auth = useState<User>("auth");
 const loading = ref(false);
 
@@ -111,16 +111,18 @@ const username = ref("");
 const password = ref("");
 const error = ref<string>();
 
-const ids = await queryContent("docs/ids").findOne();
+const payload = useState<Payload>("payload");
 
 const router = useRouter();
 
 async function signin() {
   loading.value = true;
+  
+  await importPayload();
 
   const userID = await genUserId(username.value);
 
-  if (!ids.userIDs.includes(userID)) {
+  if (!payload.value.ids.userIDs.includes(userID)) {
     error.value = "Please enter a valid username.";
     loading.value = false;
     username.value = "";

@@ -53,7 +53,7 @@
 
 <script setup lang="ts">
 import { ArrowUturnUpIcon, XCircleIcon } from "@heroicons/vue/20/solid";
-import { decryptSymmetric, type User } from "../encryption";
+import { decryptSymmetric, genKey, type Payload, type User } from "../payload";
 import { ArrowUturnLeftIcon } from "@heroicons/vue/24/outline";
 
 const route = useRoute();
@@ -64,17 +64,18 @@ if (!auth.value) {
   router.replace("/access/login");
 }
 
+const payload = useState<Payload>("payload");
+
 const url = useAsyncData(`url-${route.params.slug}`, async () => {
-  const document = (await queryContent("/docs/").find()).filter(
-    (e) =>
-      e._dir == route.params.slug && e.title?.toLowerCase() == auth.value.userID
-  )[0];
-
-  const decrypted = JSON.parse(
-    await decryptSymmetric(document.ciphertext, document.iv, auth.value.key)
+  const slug: string = Array.isArray(route.params.slug)
+    ? route.params.slug[0]
+    : route.params.slug;
+  const file = payload.value.documents[slug][auth.value.userID];
+  const key = await genKey(auth.value.password);
+  const decryptedData = JSON.parse(
+    await decryptSymmetric(file.ciphertext, file.iv, key)
   );
-
-  const data = atob(decrypted.data);
+  const data = atob(decryptedData.data);
   const byteNumbers = new Array(data.length);
   for (let i = 0; i < data.length; i++) {
     byteNumbers[i] = data.charCodeAt(i);
