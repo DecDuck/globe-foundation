@@ -8,5 +8,4 @@ export default defineNuxtConfig({
     plugins: [nodePolyfills()],
   },
   ssr: false,
-  nitro: { prerender: {ignore: ['/']} },
 });
