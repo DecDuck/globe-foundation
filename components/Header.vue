@@ -21,14 +21,14 @@
         </button>
       </div>
       <div class="hidden lg:flex lg:gap-x-12">
-        <a href="#" class="text-sm font-semibold leading-6 text-gray-900"
-          >Features</a
+        <NuxtLink href="/about" class="text-sm font-semibold leading-6 text-gray-900"
+          >About</NuxtLink
         >
-        <a href="#" class="text-sm font-semibold leading-6 text-gray-900"
-          >Marketplace</a
+        <NuxtLink href="/projects" class="text-sm font-semibold leading-6 text-gray-900"
+          >Projects</NuxtLink
         >
-        <a href="#" class="text-sm font-semibold leading-6 text-gray-900"
-          >Company</a
+        <NuxtLink href="/pricing" class="text-sm font-semibold leading-6 text-gray-900"
+          >Pricing</NuxtLink
         >
       </div>
       <div class="hidden lg:flex lg:flex-1 lg:justify-end">
@@ -94,20 +94,20 @@
                     <div class="relative mt-6 flex-1 px-6">
                       <div class="-my-6 divide-y divide-gray-500/10">
                         <div class="space-y-2 py-6">
-                          <a
-                            href="#"
+                          <NuxtLink
+                            href="/about"
                             class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                            >Features</a
+                            >About</NuxtLink
                           >
-                          <a
-                            href="#"
+                          <NuxtLink
+                            href="/projects"
                             class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                            >Marketplace</a
+                            >Projects</NuxtLink
                           >
-                          <a
-                            href="#"
+                          <NuxtLink
+                            href="/pricing`"
                             class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                            >Company</a
+                            >Pricing</NuxtLink
                           >
                         </div>
                         <div class="py-6">
@@ -146,7 +146,7 @@ import {
   TransitionRoot,
 } from "@headlessui/vue";
 import { Bars3Icon, XMarkIcon } from "@heroicons/vue/24/outline";
-import type { User } from "~/pages/access/encryption";
+import type { User } from "~/pages/access/payload";
 
 const mobileMenuOpen = ref(false);
 

@@ -97,6 +97,4 @@ export const importPayload = async () => {
       await file.async("text")
     );
   }
-
-  console.log(payload.value);
 };
